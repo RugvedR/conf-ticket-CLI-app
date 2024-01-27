@@ -2,14 +2,14 @@ package main
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 const conferenceTickets = 50
 
 var conferenceName string = "Go Conference" //you can also do it like this below
 var remainingTickets uint = 50
-var bookings []string = []string{}
+var bookings = make([]map[string]string, 0)
 
 func main() {
 	greetUsers()
@@ -51,8 +51,7 @@ func greetUsers() {
 func getFirstNames() []string {
 	var firstNames []string
 	for _, booking := range bookings {
-		var names = strings.Fields(booking) //splits the string with white space as separator, and returns a slice with split elements
-		firstNames = append(firstNames, names[0])
+		firstNames = append(firstNames, booking["firstName"])
 	}
 	// fmt.Printf("These are all our bookings: %v\n", firstNames)
 	return firstNames
@@ -77,7 +76,17 @@ func getUserInput() (string, string, string, uint) {
 
 func bookTicket(userTickets uint, firstName string, lastName string, email string) {
 	remainingTickets -= userTickets
-	bookings = append(bookings, firstName+" "+lastName)
+
+	//create a map for a user
+	// var userData = map[string]string
+	userData := make(map[string]string)
+	userData["firstName"] = firstName
+	userData["lastName"] = lastName
+	userData["email"] = email
+	userData["numberOfTickets"] = strconv.FormatUint(uint64(userTickets), 10)
+
+	bookings = append(bookings, userData)
+	fmt.Printf("List of bookings is %v\n", bookings)
 
 	fmt.Printf("User %v %v has booked %v tickets.\nYou will recieve a notification on your email: %v\n", firstName, lastName, userTickets, email)
 	fmt.Printf("#### %v tickets remaing for %v", remainingTickets, conferenceName)
